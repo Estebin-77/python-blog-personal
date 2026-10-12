@@ -1,92 +1,20 @@
-<!DOCTYPE html>
+<!doctype html>
 <html lang="es">
-
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Blog Personal</title>
-    <link rel="stylesheet" href="{{ url_for('static', filename='css/styles.css') }}">
-    <meta name="description" content="Un blog personal para compartir pensamientos y aprendizajes.">
-    <link rel="icon" href="/Blog-Personal/static/favicon.ico">
-</head>
-
+<head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Blog personal · Estiben de la Rosa</title><link rel="stylesheet" href="{{ url_for('static', filename='css/styles.css') }}"></head>
 <body>
-    <header class="navbar">
-        <div class="navbar__logo">
-            <img src="{{ url_for('static', filename='bird_2.jpg') }}" alt="Logo del blog">
-            <h1 class="navbar__title">Blog Personal</h1>
-        </div>
+<header class="navbar"><div class="navbar__logo"><img src="{{ url_for('static', filename='bird_2.jpg') }}" alt="" width="50" height="50"><h1 class="navbar__title">Blog personal</h1></div>
+<nav aria-label="Navegación"><ul class="navbar__navigation"><li><a href="#reciente">Entradas</a></li><li><a href="https://github.com/Estebin-77">Mis proyectos</a></li>{% if session.get('admin') %}<li><form method="post" action="{{ url_for('logout') }}"><input type="hidden" name="csrf_token" value="{{ csrf_token() }}"><button class="form__submit">Cerrar sesión</button></form></li>{% else %}<li><a href="{{ url_for('login') }}">Acceso del autor</a></li>{% endif %}</ul></nav></header>
+<main class="main"><p>Un espacio para compartir lo que aprendo construyendo aplicaciones web.</p>
+{% for message in get_flashed_messages() %}<p class="notice" role="status">{{ message }}</p>{% endfor %}
+{% if error %}<p class="notice notice--error" role="alert">{{ error }}</p>{% endif %}
+{% if session.get('admin') %}<section aria-labelledby="publicar"><h2 id="publicar">Agregar una entrada</h2>
+<form class="form" method="post" action="{{ url_for('home') }}"><input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
+<div class="form__group"><label for="titulo">Título</label><input type="text" name="titulo" id="titulo" maxlength="150" value="{{ form_data.get('titulo', '') }}" required></div>
+<div class="form__group"><label for="contenido">Contenido</label><textarea name="contenido" id="contenido" rows="5" maxlength="10000" required>{{ form_data.get('contenido', '') }}</textarea></div>
+<button class="form__submit">Publicar entrada</button></form></section>{% endif %}
+<section id="reciente" aria-labelledby="entradas-recientes"><h2 id="entradas-recientes">Entradas recientes</h2>
+{% for entrada in entradas %}<article class="entry"><header><h3 class="entry__title">{{ entrada.titulo }}</h3><p class="entry__date">{{ entrada.fecha | fecha_es }}</p></header><p class="entry__content">{{ entrada.contenido }}</p></article>
+{% else %}{% if not error %}<p>Aún no hay publicaciones. Vuelve pronto.</p>{% endif %}{% endfor %}
+</section></main><footer class="footer"><div class="footer__content"><p>Creado por Estiben de la Rosa · Proyecto de aprendizaje con Flask y MongoDB.</p><a href="https://github.com/Estebin-77">Ver otros proyectos</a></div></footer></body></html>
 
-        <nav>
-            <ul class="navbar__navigation">
-                <li><a href="#reciente" class="navbar__link">Reciente</a></li>
-                <li><a href="#calendario" class="navbar__link">Calendario</a></li>
-            </ul>
-        </nav>
-    </header>
-
-    <main class="main">
-        <section class="section">
-            <h2>Agregar una nueva entrada</h2>
-            <form class="form" method="post" action="#">
-                <div class="form__group">
-                    <label for="titulo">Título:</label>
-                    <input type="text" name="titulo" id="titulo" required>
-                </div>
-                <div class="form__group">
-                    <label for="contenido">Contenido:</label>
-                    <textarea name="contenido" id="contenido" rows="5" required></textarea>
-                </div>
-                <button type="submit" class="form__submit">Agregar</button>
-            </form>
-        </section>
-
-        <section aria-labelledby="entradas-recientes">
-            <h2 id="entradas-recientes">Entradas recientes:</h2>
-
-            <article class="entry">
-                <header>
-                    <h3 class="entry__title">Día de aprender Flask con Python</h3>
-                    <time datetime="2023-09-25" class="entry__date">25 de septiembre de 2023</time>
-                </header>
-                <p class="entry__content">
-                    Hoy comencé el curso de Flask y sigo encaminado a ser un desarrollador full stack.
-                </p>
-            </article>
-
-            {% for entrada in entradas %}
-            <article class="entry">
-                <header>
-                    <h3 class="entry__title">{{entrada.titulo}}</h3>
-                    <time datetime={{entrada.fecha}} class="entry__date">{{entrada.fecha}}</time>
-                </header>
-                <p class="entry__content">
-                    {{entrada.contenido}}
-                </p>
-            </article>
-            {% endfor %}
-        </section>
-    </main>
-
-    <footer class="footer">
-        <div class="footer__content">
-            <section class="footer__left">
-                <p>Creado por Estiben de la Rosa</p>
-                <a href="#">Ver otros proyectos</a>
-            </section>
-
-            <nav class="footer__right">
-                <div class="footer__column">
-                    <a href="#reciente">Recientes</a>
-                    <a href="#calendario">Calendario</a>
-                </div>
-                <div class="footer__column">
-                    <a href="#">Acerca de</a>
-                    <a href="#">Contacto</a>
-                </div>
-            </nav>
-        </div>
-    </footer>
-</body>
-
-</html>
