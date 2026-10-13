@@ -4,6 +4,16 @@ import mongomock
 import pytest
 from pymongo.errors import ConnectionFailure
 from app import crear_app
+from mongo_config import mongo_uri
+from pymongo.uri_parser import parse_uri
+
+def test_special_characters_in_database_password():
+    password = 'demo@:/?#%+ palabra'
+    parsed = parse_uri(mongo_uri('mongodb://usuario@localhost:27017/blog?authSource=admin', password))
+    assert parsed['password'] == password
+    assert parsed['username'] == 'usuario'
+    assert parsed['database'] == 'blog'
+    assert parsed['options']['authSource'] == 'admin'
 
 @pytest.fixture
 def app():
@@ -72,3 +82,4 @@ def test_logout_and_bad_login(app):
     login(client)
     assert client.post('/logout', data={'csrf_token': token(client.get('/'))}).status_code == 303
     assert 'Agregar una entrada' not in client.get('/').text
+

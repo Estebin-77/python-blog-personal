@@ -39,3 +39,5 @@ Para cargar datos de muestra, añade temporalmente `&& python seed.py` al build 
 ## Para explicar en una entrevista
 
 Flask recibe la petición, PyMongo accede a los documentos de MongoDB y Jinja genera HTML. Los formularios usan POST; Flask-WTF valida el token CSRF. La sesión distingue al autor de los lectores. La aplicación se organiza mediante una función crear_app, lo que facilita configurar el servidor y las pruebas. No utiliza Django, React ni SQLite.
+
+En Render puedes introducir MONGODB_PASSWORD en un campo separado. El servidor codifica sus caracteres especiales antes de construir la conexión. No publiques contraseñas en GitHub.

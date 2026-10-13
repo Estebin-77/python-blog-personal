@@ -7,6 +7,7 @@ from flask_wtf.csrf import CSRFError
 from pymongo import MongoClient
 from pymongo.errors import PyMongoError
 from dotenv import load_dotenv
+from mongo_config import mongo_uri
 
 csrf = CSRFProtect()
 
@@ -16,6 +17,7 @@ def crear_app(test_config=None):
     app.config.update(
         SECRET_KEY=os.getenv("SECRET_KEY"),
         MONGODB_URI=os.getenv("MONGODB_URI"),
+        MONGODB_PASSWORD=os.getenv("MONGODB_PASSWORD"),
         MONGODB_DATABASE=os.getenv("MONGODB_DATABASE", "blog"),
         BLOG_ADMIN_USER=os.getenv("BLOG_ADMIN_USER", "admin"),
         BLOG_ADMIN_PASSWORD=os.getenv("BLOG_ADMIN_PASSWORD"),
@@ -33,7 +35,7 @@ def crear_app(test_config=None):
     if app.config.get("DATABASE") is not None:
         app.db = app.config["DATABASE"]
     elif app.config["MONGODB_URI"]:
-        client = MongoClient(app.config["MONGODB_URI"], serverSelectionTimeoutMS=5000)
+        client = MongoClient(mongo_uri(app.config["MONGODB_URI"], app.config["MONGODB_PASSWORD"]), serverSelectionTimeoutMS=5000)
         app.extensions["mongo_client"] = client
         app.db = client[app.config["MONGODB_DATABASE"]]
 
