@@ -83,3 +83,9 @@ def test_logout_and_bad_login(app):
     assert client.post('/logout', data={'csrf_token': token(client.get('/'))}).status_code == 303
     assert 'Agregar una entrada' not in client.get('/').text
 
+
+
+def test_dates_use_santo_domingo_day(app):
+    from datetime import datetime, timezone
+    app.db.contenido.insert_one({'titulo': 'Fecha', 'contenido': 'Prueba', 'fecha': datetime(2026, 10, 13, 1, tzinfo=timezone.utc)})
+    assert '12 de octubre de 2026' in app.test_client().get('/').text
