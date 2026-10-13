@@ -1,6 +1,6 @@
 import os
 import hmac
-from datetime import datetime, timezone
+from datetime import datetime, timezone, timedelta
 from flask import Flask, render_template, request, redirect, url_for, flash, session, jsonify
 from flask_wtf import CSRFProtect
 from flask_wtf.csrf import CSRFError
@@ -43,6 +43,8 @@ def crear_app(test_config=None):
     def fecha_es(value):
         if not isinstance(value, datetime):
             return value or ""
+        value = value.replace(tzinfo=timezone.utc) if value.tzinfo is None else value
+        value = value.astimezone(timezone(timedelta(hours=-4)))
         meses = ["enero", "febrero", "marzo", "abril", "mayo", "junio", "julio",
                  "agosto", "septiembre", "octubre", "noviembre", "diciembre"]
         return f"{value.day} de {meses[value.month - 1]} de {value.year}"
